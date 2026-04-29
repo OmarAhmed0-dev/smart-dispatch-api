@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 //java.awt.Point is for desktop GUI coordinates (pixels on a screen). It will not work with PostGIS or spatial database queries.
 //So we use
+import lombok.Getter;
+import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "shipment")
+@Getter
+@Setter
 public class Shipment {
 
     @Id
@@ -36,13 +40,7 @@ public class Shipment {
     @JoinColumn(name = "receiver_id")
     private Receiver receiver;
 
-    public Trip getTrip() {
-        return trip;
-    }
 
-    public void setTrip(Trip trip) {
-        this.trip = trip;
-    }
 
     @ManyToOne( cascade ={CascadeType.DETACH , CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
@@ -68,9 +66,9 @@ public class Shipment {
     private double shipmentValue;
 
     @Column(name = "shipment_insurance")
-    private boolean shippingInsurace;
+    private boolean shippingInsurance;
 
-    @Column(name = "shipemtn_cost")
+    @Column(name = "shipment_cost")
     private double cost;
 
     @Column(columnDefinition = "geometry(Point, 4326)" , name = "pickup_location")
@@ -84,13 +82,6 @@ public class Shipment {
             cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST ,CascadeType.REFRESH})
     private List<ShipmentHistory> history;
 
-    public List<ShipmentHistory> getHistory() {
-        return history;
-    }
-
-    public void setHistory(List<ShipmentHistory> history) {
-        this.history = history;
-    }
 
     public void changeStatus(ShipmentHistory action) {
         if(history == null) {
@@ -116,124 +107,14 @@ public class Shipment {
         this.volume = volume;
         this.status = status;
         this.shipmentValue = shipmentValue;
-        this.shippingInsurace = shippingInsurace;
+        this.shippingInsurance = shippingInsurace;
         this.cost = cost;
         this.pickUpLocation = pickUpLocation;
         this.destinationLocation = destinationLocation;
         this.description = description;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getArrivedAt() {
-        return arrivedAt;
-    }
-
-    public void setArrivedAt(LocalDateTime arrivedAt) {
-        this.arrivedAt = arrivedAt;
-    }
-
-    public Sender getSender() {
-        return sender;
-    }
-
-    public void setSender(Sender sender) {
-        this.sender = sender;
-    }
-
-    public Receiver getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiverReceiver(Receiver receiver) {
-        this.receiver = receiver;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public ShipmentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ShipmentStatus status) {
-        this.status = status;
-    }
-
-    public double getVolume() {
-        return volume;
-    }
-
-    public void setVolume(double volume) {
-        this.volume = volume;
-    }
-
-    public double getShipmentValue() {
-        return shipmentValue;
-    }
-
-    public void setShipmentValue(double shipmentValue) {
-        this.shipmentValue = shipmentValue;
-    }
-
-    public boolean isShippingInsurace() {
-        return shippingInsurace;
-    }
-
-    public void setShippingInsurace(boolean shippingInsurace) {
-        this.shippingInsurace = shippingInsurace;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public Point getPickUpLocation() {
-        return pickUpLocation;
-    }
-
-    public void setPickUpLocation(Point pickUpLocation) {
-        this.pickUpLocation = pickUpLocation;
-    }
-
-    public Point getDestinationLocation() {
-        return destinationLocation;
-    }
-
-    public void setDestinationLocation(Point destinationLocation) {
-        this.destinationLocation = destinationLocation;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     @Override
     public String toString() {
@@ -249,7 +130,7 @@ public class Shipment {
                 ", volume=" + volume +
                 ", status=" + status +
                 ", shipmentValue=" + shipmentValue +
-                ", shippingInsurace=" + shippingInsurace +
+                ", shippingInsurace=" + shippingInsurance +
                 ", cost=" + cost +
                 ", pickUpLocation=" + pickUpLocation +
                 ", destinationLocation=" + destinationLocation +

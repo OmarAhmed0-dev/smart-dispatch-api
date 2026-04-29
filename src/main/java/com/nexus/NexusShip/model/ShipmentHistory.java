@@ -1,11 +1,16 @@
 package com.nexus.NexusShip.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name= "shipment_history")
+@Getter
+@Setter
 public class ShipmentHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,54 +45,6 @@ public class ShipmentHistory {
         this.whoMakeTheChange = whoMakeTheChange;
         this.status = status;
 
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public User getWhoMakeTheChange() {
-        return whoMakeTheChange;
-    }
-
-    public void setWhoMakeTheChange(User whoMakeTheChange) {
-        this.whoMakeTheChange = whoMakeTheChange;
-    }
-
-    public ShipmentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ShipmentStatus status) {
-        this.status = status;
-    }
-
-    public Shipment getShipment() {
-        return shipment;
-    }
-
-    public void setShipment(Shipment shipment) {
-        this.shipment = shipment;
     }
 
     @Override

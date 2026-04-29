@@ -1,6 +1,8 @@
 package com.nexus.NexusShip.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,12 +10,14 @@ import java.util.List;
 
 @Entity
 @Table(name = "trip")
+@Getter
+@Setter
 public class Trip {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
-    private Long Id;
+    private Long id;
 
     @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST ,CascadeType.REFRESH})
     @JoinColumn(name = "driver_id")
@@ -27,8 +31,6 @@ public class Trip {
             cascade ={CascadeType.DETACH , CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Shipment> shipmentList;
-
-
 
 
     @Column(name = "status")
@@ -48,61 +50,6 @@ public class Trip {
         this.vehicle = vehicle;
     }
 
-    public LocalDateTime getEndedAt() {
-        return endedAt;
-    }
-
-    public void setEndedAt(LocalDateTime endedAt) {
-        this.endedAt = endedAt;
-    }
-
-    public LocalDateTime getStartedAt() {
-        return startedAt;
-    }
-
-    public void setStartedAt(LocalDateTime startedAt) {
-        this.startedAt = startedAt;
-    }
-
-    public List<Shipment> getShipmentList() {
-        return shipmentList;
-    }
-
-    public void setShipmentList(List<Shipment> shipments) {
-        this.shipmentList = shipments;
-    }
-
-    public TripStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TripStatus status) {
-        this.status = status;
-    }
-
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public Driver getDriver() {
-        return driver;
-    }
-
-    public void setDriver(Driver driver) {
-        this.driver = driver;
-    }
-
-    public Long getId() {
-        return Id;
-    }
-
-    public void setId(Long id) {
-        Id = id;
-    }
 
     public void addShipment(Shipment shipment) {
         if(shipmentList == null){
@@ -116,7 +63,7 @@ public class Trip {
     @Override
     public String toString() {
         return "Trip{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", driver=" + driver +
                 ", vehicle=" + vehicle +
                 ", shipmentList=" + shipmentList +
