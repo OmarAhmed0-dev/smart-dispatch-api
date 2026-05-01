@@ -43,7 +43,7 @@ public class Receiver {
             shipmentList = new ArrayList<>();
         }
         shipmentList.add(shipment);
-        shipment.setReciver(this);
+        shipment.setReceiver(this);
 
     }
 

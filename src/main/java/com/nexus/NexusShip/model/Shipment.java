@@ -159,7 +159,7 @@ public class Shipment {
         return receiver;
     }
 
-    public void setReceiverReceiver(Receiver receiver) {
+    public void setReceiver(Receiver receiver) {
         this.receiver = receiver;
     }
 
