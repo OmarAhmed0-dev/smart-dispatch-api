@@ -3,9 +3,13 @@ package com.nexus.NexusShip.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "admin_user")
+@Getter
+@Setter
 public class Admin extends User{
 
     @Column(name = "salary")
@@ -21,12 +25,7 @@ public class Admin extends User{
     }
 
 
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-    public double getSalary() {
-        return salary;
-    }
+
 
     @Override
     public String toString() {

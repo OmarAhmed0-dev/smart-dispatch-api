@@ -4,12 +4,16 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "sender")
+@Getter
+@Setter
 public class Sender extends User {
 
     public Sender() {
@@ -37,13 +41,6 @@ public class Sender extends User {
     }
 
 
-    public List<Shipment> getShipmentList() {
-        return shipmentList;
-    }
-
-    public void setShipmentList(List<Shipment> shipments) {
-        this.shipmentList = shipments;
-    }
 
     @Override
     public String toString() {

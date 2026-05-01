@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 //java.awt.Point is for desktop GUI coordinates (pixels on a screen). It will not work with PostGIS or spatial database queries.
 //So we use
+import lombok.Getter;
+import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "shipment")
+@Getter
+@Setter
 public class Shipment {
 
     @Id

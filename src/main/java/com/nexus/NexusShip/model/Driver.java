@@ -1,6 +1,8 @@
 package com.nexus.NexusShip.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "driver")
+@Getter
+@Setter
 public class Driver extends User{
 
     @Column(name = "license_number")
@@ -25,13 +29,6 @@ public class Driver extends User{
             cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST ,CascadeType.REFRESH})
     private List<Trip> tripList;
 
-    public List<Trip> getTripList() {
-        return tripList;
-    }
-
-    public void setTripList(List<Trip> tripList) {
-        this.tripList = tripList;
-    }
 
     public void addTrip(Trip trip) {
         if(tripList == null) {
@@ -55,29 +52,7 @@ public class Driver extends User{
     }
 
 
-    public Long getLicenseNumber() {
-        return licenseNumber;
-    }
 
-    public void setLicenseNumber(Long licenseNumber) {
-        this.licenseNumber = licenseNumber;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
 
     @Override
     public String toString() {
