@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.locationtech.jts.geom.Point;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,13 +63,13 @@ public class Shipment {
     private ShipmentStatus status;
 
     @Column(name = "shipment_value")
-    private double shipmentValue;
+    private BigDecimal shipmentValue;
 
     @Column(name = "shipment_insurance")
     private boolean shippingInsurace;
 
     @Column(name = "shipemtn_cost")
-    private double cost;
+    private BigDecimal cost;
 
     @Column(columnDefinition = "geometry(Point, 4326)" , name = "pickup_location")
     private Point pickUpLocation;
@@ -95,7 +96,7 @@ public class Shipment {
     public Shipment(){}
 
     public Shipment(LocalDateTime createdAt, LocalDateTime arrivedAt, Receiver receiver, Sender sender, double weight,
-                    double volume, ShipmentStatus status, double shipmentValue, boolean shippingInsurace, double cost,
+                    double volume, ShipmentStatus status, BigDecimal shipmentValue, boolean shippingInsurace, BigDecimal cost,
                     Point pickUpLocation, Point destinationLocation , String description) {
         this.createdAt = createdAt;
         this.arrivedAt = arrivedAt;
