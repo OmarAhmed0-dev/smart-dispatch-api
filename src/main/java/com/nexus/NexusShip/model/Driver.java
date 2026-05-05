@@ -15,7 +15,7 @@ import java.util.List;
 public class Driver extends User{
 
     @Column(name = "license_number")
-    private Long licenseNumber;
+    private String licenseNumber;
 
     @Column(name = "salary")
     private double salary;
@@ -44,7 +44,7 @@ public class Driver extends User{
     public Driver(){}
 
     public Driver(String firstName, String lastName, Gender gender, String nationalId, String email, String password,
-                  String phoneNumber, Long licenseNumber, double salary) {
+                  String phoneNumber, String licenseNumber, double salary) {
         super(firstName, lastName, gender, nationalId, email, password, phoneNumber);
 
         this.licenseNumber = licenseNumber;

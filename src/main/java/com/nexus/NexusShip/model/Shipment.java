@@ -66,9 +66,9 @@ public class Shipment {
     private BigDecimal shipmentValue;
 
     @Column(name = "shipment_insurance")
-    private boolean shippingInsurace;
+    private boolean shipmentInsurance;
 
-    @Column(name = "shipemtn_cost")
+    @Column(name = "shipment_cost")
     private BigDecimal cost;
 
     @Column(columnDefinition = "geometry(Point, 4326)" , name = "pickup_location")
@@ -106,7 +106,7 @@ public class Shipment {
         this.volume = volume;
         this.status = status;
         this.shipmentValue = shipmentValue;
-        this.shippingInsurace = shippingInsurace;
+        this.shipmentInsurance = shippingInsurace;
         this.cost = cost;
         this.pickUpLocation = pickUpLocation;
         this.destinationLocation = destinationLocation;
@@ -128,7 +128,7 @@ public class Shipment {
                 ", volume=" + volume +
                 ", status=" + status +
                 ", shipmentValue=" + shipmentValue +
-                ", shippingInsurace=" + shippingInsurace +
+                ", shippingInsurace=" + shipmentInsurance +
                 ", cost=" + cost +
                 ", pickUpLocation=" + pickUpLocation +
                 ", destinationLocation=" + destinationLocation +
