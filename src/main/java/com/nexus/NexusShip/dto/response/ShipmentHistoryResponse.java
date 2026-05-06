@@ -10,7 +10,7 @@ public record ShipmentHistoryResponse(
         Long shipmentId,
         ShipmentStatus status,
         Long changedByUserID,
-        Long changedByUserName,
+        String changedByUserName,
         LocalDateTime updatedAt,
         String note
 ) {}

@@ -20,7 +20,7 @@ public class Vehicle {
     private double maxWeight;
 
     @Column(name = "max_height",nullable = false)
-    private double  maxHeight;
+    private double maxVolume;
 
     @Column(name = "vehicle_type",nullable = false)
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,7 @@ public class Vehicle {
         return "Vehicle{" +
                 "id=" + id +
                 ", maxWeight=" + maxWeight +
-                ", maxHeight=" + maxHeight +
+                ", maxHeight=" + maxVolume +
                 ", vehicleType=" + vehicleType +
                 '}';
     }

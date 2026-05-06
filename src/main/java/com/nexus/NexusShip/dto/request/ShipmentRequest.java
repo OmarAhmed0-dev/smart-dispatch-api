@@ -18,6 +18,9 @@ public record ShipmentRequest(
         @NotNull(message = "Volume is required")
         double volume,
 
+        @NotBlank(message = "Description is required")
+        String description,
+
         @NotNull(message = "Shipment value is required")
         BigDecimal shipmentValue,
 

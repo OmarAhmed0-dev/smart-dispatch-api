@@ -1,6 +1,5 @@
 package com.nexus.NexusShip.dto.response;
 
-import com.nexus.NexusShip.model.Shipment;
 import com.nexus.NexusShip.model.TripStatus;
 
 import java.time.LocalDateTime;
