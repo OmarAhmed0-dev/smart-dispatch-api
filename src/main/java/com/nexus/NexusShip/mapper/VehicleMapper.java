@@ -12,7 +12,7 @@ public class VehicleMapper {
         Vehicle vehicle = new Vehicle();
 
         vehicle.setVehicleType(request.vehicleType());
-        vehicle.setMaxVolume(request.vehicleType().getMaxWeight());
+        vehicle.setMaxWeight(request.vehicleType().getMaxWeight());
         vehicle.setMaxVolume(request.vehicleType().getMaxVolume());
 
         return vehicle;

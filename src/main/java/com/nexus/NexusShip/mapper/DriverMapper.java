@@ -23,7 +23,7 @@ public class DriverMapper {
     }
 
 
-    public DriverResponse response(Driver driver) {
+    public DriverResponse  toResponse(Driver driver) {
         return new DriverResponse(
                 driver.getId(),
                 driver.getFirstName(),

@@ -9,8 +9,16 @@ import java.util.List;
 @Component
 public class TripMapper {
 
+    private final ShipmentMapper mapper;
+
+    public TripMapper(ShipmentMapper mapper) {
+        this.mapper = mapper;
+    }
+    
+
     public TripResponse toResponse(Trip trip){
-        ShipmentMapper mapper = new ShipmentMapper();
+
+
         List<ShipmentResponse> shipmentResponseList = trip.getShipmentList()
                 .stream().map(mapper::toResponse).toList();
         return new TripResponse(

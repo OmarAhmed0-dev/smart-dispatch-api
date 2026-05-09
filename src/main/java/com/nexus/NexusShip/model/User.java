@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
+@DynamicUpdate //Update only the change fields not all columns
+@SQLRestriction("is_deleted = false")
 public abstract class User {
 
     @Id
@@ -42,6 +46,9 @@ public abstract class User {
     @Column(name = "phone_number",nullable = false)
     private String phoneNumber;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "whoMakeTheChange",
                cascade = {CascadeType.DETACH , CascadeType.MERGE, CascadeType.PERSIST ,CascadeType.REFRESH}
     )
@@ -58,6 +65,7 @@ public abstract class User {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
+        isDeleted = false;
     }
 
     @Override
