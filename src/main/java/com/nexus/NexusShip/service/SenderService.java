@@ -7,6 +7,7 @@ import com.nexus.NexusShip.dto.response.SenderResponse;
 import com.nexus.NexusShip.exception.UserAlreadyExists;
 import com.nexus.NexusShip.mapper.SenderMapper;
 import com.nexus.NexusShip.model.Sender;
+import com.nexus.NexusShip.model.User;
 import com.nexus.NexusShip.repository.SenderRepository;
 import com.nexus.NexusShip.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -38,9 +40,25 @@ public class SenderService {
     @Transactional
     public SenderResponse registerSender(SenderRequest request) {
 
+
         //Check If the nationalID is Exist
-        if (userRepository.findByNationalId(request.nationalId()).isPresent()) {
-            throw new UserAlreadyExists("A user with this National ID already exits.");
+        Optional<User> existingUser = userRepository.findUserByNationalIdEverywhere(request.nationalId());
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            Optional<Sender> existingSender = senderRepository.findById(user.getId());
+            if(existingSender.isPresent()){
+                Sender sender = existingSender.get();
+                if(sender.isDeleted()) {
+                    sender.setDeleted(false);
+                    return senderMapper.toResponse(senderRepository.save(sender));
+                }else {
+                    throw new UserAlreadyExists("A user with this National ID already exits.");
+
+                }
+            }else {
+                //The user is exists but not sender
+                return upgradeUserToSender(user);
+            }
         }
 
         //Check if the Email is exists
@@ -60,6 +78,14 @@ public class SenderService {
         //Map entity back to response
         return senderMapper.toResponse(savedSender);
 
+    }
+    @Transactional
+    public SenderResponse upgradeUserToSender(User user) {
+        senderRepository.insertSenderRole(user.getId());
+        Sender upgradedSender = senderRepository.findById(user.getId())
+                .orElseThrow(()->new UserNotFound("Error during sender role upgrade."));
+
+        return senderMapper.toResponse(upgradedSender);
     }
 
 
