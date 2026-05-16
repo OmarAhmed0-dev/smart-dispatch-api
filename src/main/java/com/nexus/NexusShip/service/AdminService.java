@@ -39,19 +39,19 @@ public class AdminService {
     @Transactional
     public AdminResponse registerAdmin(AdminRegistrationRequest request) {
         //Check if the User is exists
-        Optional<User> existingUser = userRepository.findUserByNationalIdEverywhere(request.nationalId());
+        Optional<Long> existingUser = userRepository.findUserIdByNationalIdEverywhere(request.nationalId());
         if (existingUser.isPresent()) {
             //Check if the user is admin
-            User user = existingUser.get();
+            Long userId = existingUser.get();
 
             //check if the user is a driver
-            Optional<Driver> driver = driverRepository.findById(user.getId());
+            Optional<Driver> driver = driverRepository.findById(userId);
             if (driver.isPresent()) {
                 throw new UserAlreadyExists("This user is an active driver. He must be deleted from drivers to become an Admin");
             }
 
             //Check if the user is admin
-            Optional<Admin> existingAdmin = adminRepository.findById(user.getId());
+            Optional<Admin> existingAdmin = adminRepository.findById(userId);
             if (existingAdmin.isPresent()) {
                 //The user is admin
                 //Check if the admin is deleted or not
@@ -66,6 +66,7 @@ public class AdminService {
                 }
             } else {
                 //The user is exists but not an admin
+                User user = userRepository.findById(userId).get();
                 return upgradeUserToAdmin(user);
             }
 

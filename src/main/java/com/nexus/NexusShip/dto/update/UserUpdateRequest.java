@@ -18,7 +18,7 @@ public record UserUpdateRequest(
         )
         String phoneNumber,
 
-        @NotNull(message = "Gender is required")
+
         Gender gender
 
 )

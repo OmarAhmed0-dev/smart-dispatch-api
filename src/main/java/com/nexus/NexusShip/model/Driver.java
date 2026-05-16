@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "driver")
 @Getter
 @Setter
+@PrimaryKeyJoinColumn(name = "driver_id")
 public class Driver extends User{
 
     @Column(name = "license_number",nullable = false)

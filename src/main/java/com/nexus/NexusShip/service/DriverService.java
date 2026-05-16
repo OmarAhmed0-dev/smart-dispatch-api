@@ -47,19 +47,18 @@ public class DriverService {
     public DriverResponse registerDriver(DriverRegistrationRequest request) {
 
         //First Check if the user is exits or as  active/deleted driver
-        Optional<User> existingUser = userRepository.findUserByNationalIdEverywhere(request.nationalId());
+        Optional<Long> existingUserId = userRepository.findUserIdByNationalIdEverywhere(request.nationalId());
 
         Optional<Driver> existingDriver = driverRepository.findByLicenseNumberEverywhere(request.licenseNumber());
 
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
+        if (existingUserId.isPresent()) {
+            Long UserId = existingUserId.get();
 
             //Check if the user is an active admin
-            Optional<Admin> admin = adminRepository.findById(user.getId());
+            Optional<Admin> admin = adminRepository.findById(UserId);
             if(admin.isPresent()) {
                 throw new UserAlreadyExists("This user is an active admin. He must be deleted from admins to become a driver.");
             }
-
 
 
             //check if the user is a driver
@@ -68,7 +67,7 @@ public class DriverService {
                 //it means that the user is a driver
                 //check if he is active or deleted driver
                 Driver driver = existingDriver.get();
-                if(!driver.getId().equals(user.getId())){
+                if(!driver.getId().equals(UserId)){
                     throw new UserAlreadyExists("This license number belongs to another driver.");
                 }
 
@@ -83,6 +82,7 @@ public class DriverService {
 
             } else {
                 //Upgrade sender to driver
+                User user = userRepository.findById(UserId).get();
                 return upgradeSenderToDriver(user, request);
             }
         }

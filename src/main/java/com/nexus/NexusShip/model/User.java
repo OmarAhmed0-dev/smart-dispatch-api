@@ -40,7 +40,7 @@ public abstract class User {
     @Email(message = "Invalid email")
     private String email;
 
-    @Column(name = "password" ,nullable = false)
+    @Column(name = "user_password" ,nullable = false)
     private String password;
 
     @Column(name = "phone_number",nullable = false)

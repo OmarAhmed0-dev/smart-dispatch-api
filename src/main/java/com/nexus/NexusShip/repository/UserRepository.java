@@ -1,7 +1,9 @@
 package com.nexus.NexusShip.repository;
 
 import com.nexus.NexusShip.model.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,16 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     // finding a user even if deleted with native query to avoid @SQLRestriction("is_deleted = false")
 
-    @Query(value = "select * from users where national_id =: nationalId", nativeQuery = true)
-    Optional<User> findUserByNationalIdEverywhere(@Param("nationalId")String nationalId);
+    @Query(value = "SELECT id FROM users WHERE national_id = :nationalId", nativeQuery = true)
+    Optional<Long> findUserIdByNationalIdEverywhere(@Param("nationalId") String nationalId);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE users SET is_deleted = false WHERE id =:id" ,nativeQuery = true)
+    void restoreUser(@Param("id") Long id);
+
+
+    @Query(value = "select * from users where  id =:id",nativeQuery = true)
+    Optional<User> findUserByIdEveryWhere(@Param("id") Long id);
 }

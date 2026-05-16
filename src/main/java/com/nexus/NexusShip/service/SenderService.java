@@ -40,24 +40,33 @@ public class SenderService {
     @Transactional
     public SenderResponse registerSender(SenderRequest request) {
 
-
         //Check If the nationalID is Exist
-        Optional<User> existingUser = userRepository.findUserByNationalIdEverywhere(request.nationalId());
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            Optional<Sender> existingSender = senderRepository.findById(user.getId());
+        Optional<Long> existingUserId = userRepository.findUserIdByNationalIdEverywhere(request.nationalId());
+        if (existingUserId.isPresent()) {
+            Long userId = existingUserId.get();
+            Optional<Long> existingSender = senderRepository.findSenderIdByIdEveryWhere(userId);
+
             if(existingSender.isPresent()){
-                Sender sender = existingSender.get();
-                if(sender.isDeleted()) {
-                    sender.setDeleted(false);
-                    return senderMapper.toResponse(senderRepository.save(sender));
+                Sender sender = senderRepository.findSenderByIdEveryWhere(userId).get();
+                if(!sender.isDeleted()) {
+                    //The sender is an active sender
+                    throw new UserAlreadyExists("A user with this National ID already exists as an active sender.");
                 }else {
-                    throw new UserAlreadyExists("A user with this National ID already exits.");
+                    //The sender is deleted
+
+                    userRepository.restoreUser(userId);
+                    Sender restoredSender = senderRepository.findSenderByIdEveryWhere(userId)
+                            .orElseThrow(() -> new UserNotFound("There is a problem during restore the deleted User."));
+                    restoredSender.setDeleted(false);
+                    return senderMapper.toResponse(senderRepository.save(restoredSender));
 
                 }
             }else {
-                //The user is exists but not sender
-                return upgradeUserToSender(user);
+               userRepository.restoreUser(userId);
+                User restoredUser = userRepository.findUserByIdEveryWhere(userId) // استخدم الـ Native هنا
+                        .orElseThrow(() -> new UserNotFound("User not found for upgrade."));
+
+                return upgradeUserToSender(restoredUser);
             }
         }
 
@@ -85,17 +94,17 @@ public class SenderService {
         Sender upgradedSender = senderRepository.findById(user.getId())
                 .orElseThrow(()->new UserNotFound("Error during sender role upgrade."));
 
-        return senderMapper.toResponse(upgradedSender);
+        return senderMapper.toResponse(senderRepository.save(upgradedSender));
     }
 
 
     //Get all sender
-    public List<SenderResponse> getAllSenders() {
+    public List<SenderResponse> findAllSenders() {
         return senderRepository.findAll().stream().map(senderMapper::toResponse).toList();
     }
 
     //Get sender by id
-    public SenderResponse getSenderById(Long id) {
+    public SenderResponse findSenderById(Long id) {
 
         return senderRepository.findById(id)
                 .map(senderMapper::toResponse)
@@ -116,6 +125,8 @@ public class SenderService {
 
     @Transactional
     public SenderResponse updateSender(Long id, UserUpdateRequest request) {
+
+        System.out.println("The received request is " + request);
 
         Sender sender = senderRepository.findById(id)
                 .orElseThrow(() -> new UserNotFound("Sender not found with id: " + id));
@@ -144,8 +155,7 @@ public class SenderService {
             sender.setGender(request.gender());
         }
 
-        Sender updatedSender = senderRepository.save(sender);
-        return senderMapper.toResponse(updatedSender);
+        return senderMapper.toResponse( senderRepository.save(sender));
 
     }
 
