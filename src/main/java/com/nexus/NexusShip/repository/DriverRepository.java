@@ -32,13 +32,19 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
             "AND d.id NOT IN (SELECT t2.driver.id FROM Trip t2 where t2.status = 'ACTIVE')")
     List<Driver> findAvailableDriver();
 
-    @Query(value = "select * from Driver where license_number = :licenseNumber", nativeQuery = true)
-    Optional<Driver> findByLicenseNumberEverywhere(@Param("licenseNumber") String licenseNumber);
+    @Query(value = "select u.* , d.*  from driver d join users u ON  d.driver_id = u.id WHERE d.driver_id = :id", nativeQuery = true)
+    Optional<Driver> findByIdEverywhere(@Param("id") Long id);
+
+    @Query(value = "select driver_id from driver where license_number =:licenseNumber" , nativeQuery = true)
+    Optional<Long> findDriverIdByLicenseNumberEverywhere(@Param("licenseNumber") String licenseNumber);
+
+    @Query(value = "SELECT driver_id FROM driver WHERE driver_id = :id", nativeQuery = true)
+    Optional<Long> findDriverIdByIdEverywhere(@Param("id") Long id);
 
 
     @Transactional
     @Modifying
-    @Query(value = "INSERT into Driver (id,license_number ,rating,salary) values (:id ,:licenseNumber, :rating,:salary)", nativeQuery = true)
+    @Query(value = "INSERT into driver (driver_id,license_number ,rating,salary) values (:id ,:licenseNumber, :rating,:salary)", nativeQuery = true)
     void insertDriverRole(@Param("id") long id, @Param("licenseNumber") String licenseNumber,
                           @Param("rating") double rating , @Param("salary")BigDecimal salary);
 

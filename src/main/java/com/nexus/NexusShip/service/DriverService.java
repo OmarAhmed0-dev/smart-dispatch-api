@@ -29,7 +29,7 @@ public class DriverService {
     private final DriverMapper driverMapper;
     private final PasswordEncoder passwordEncoder;
 
-    private static  final BigDecimal INITIAL_SALARY = BigDecimal.valueOf(5000);
+    private static final BigDecimal INITIAL_SALARY = BigDecimal.valueOf(5000);
 
     @Autowired
     public DriverService(DriverRepository driverRepository, UserRepository userRepository, AdminRepository adminRepository
@@ -49,30 +49,29 @@ public class DriverService {
         //First Check if the user is exits or as  active/deleted driver
         Optional<Long> existingUserId = userRepository.findUserIdByNationalIdEverywhere(request.nationalId());
 
-        Optional<Driver> existingDriver = driverRepository.findByLicenseNumberEverywhere(request.licenseNumber());
 
         if (existingUserId.isPresent()) {
-            Long UserId = existingUserId.get();
+            Long userId = existingUserId.get();
 
             //Check if the user is an active admin
-            Optional<Admin> admin = adminRepository.findById(UserId);
-            if(admin.isPresent()) {
+            Optional<Admin> admin = adminRepository.findById(userId);
+            if (admin.isPresent()) {
                 throw new UserAlreadyExists("This user is an active admin. He must be deleted from admins to become a driver.");
             }
-
+            Optional<Long> existingDriverId = driverRepository.findDriverIdByIdEverywhere(userId);
 
             //check if the user is a driver
 
-            if (existingDriver.isPresent()) {
+            if (existingDriverId.isPresent()) {
                 //it means that the user is a driver
                 //check if he is active or deleted driver
-                Driver driver = existingDriver.get();
-                if(!driver.getId().equals(UserId)){
-                    throw new UserAlreadyExists("This license number belongs to another driver.");
-                }
+                Driver driver = driverRepository.findByIdEverywhere(existingDriverId.get())
+                        .orElseThrow(() -> new UserNotFound("Error during restore the driver"));
+
 
                 if (driver.isDeleted()) {
                     //Restore Old driver
+                    userRepository.restoreUser(userId);
                     driver.setDeleted(false);
                     return driverMapper.toResponse(driverRepository.save(driver));
                 } else {
@@ -81,14 +80,32 @@ public class DriverService {
                 }
 
             } else {
-                //Upgrade sender to driver
-                User user = userRepository.findById(UserId).get();
+                //Check if the license number is used
+                if (driverRepository.findDriverIdByLicenseNumberEverywhere(request.licenseNumber()).isPresent()) {
+                    throw new UserAlreadyExists("This license number is already registered by another driver.");
+                }
+                //Upgrade User to driver
+
+                User user = userRepository.findUserByIdEveryWhere(userId)
+                        .orElseThrow(() -> new UserNotFound("Error during restore the user"));
+
+                //check if the user is deleted
+                if (user.isDeleted()) {
+                    userRepository.restoreUser(user.getId());
+                }
+
                 return upgradeSenderToDriver(user, request);
             }
         }
-        if(existingDriver.isPresent()) {
-            throw  new UserAlreadyExists("This license number already registered");
+        //Check for the new drivers
+        if (driverRepository.findDriverIdByLicenseNumberEverywhere(request.licenseNumber()).isPresent()) {
+            throw new UserAlreadyExists("This license number is already registered.");
         }
+
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new UserAlreadyExists("Email is already in use.");
+        }
+
         Driver newDriver = driverMapper.toEntity(request);
         newDriver.setPassword(passwordEncoder.encode(request.password()));
         newDriver.setRating(0.0);
@@ -99,9 +116,10 @@ public class DriverService {
 
     @Transactional
     public DriverResponse upgradeSenderToDriver(User user, DriverRegistrationRequest request) {
-        driverRepository.insertDriverRole(user.getId() , request.licenseNumber() ,0.0,INITIAL_SALARY);
-        Driver upgradedDriver = driverRepository.findById(user.getId())
-                .orElseThrow(()->new UserNotFound("Error during upgrade process."));
+        driverRepository.insertDriverRole(user.getId(), request.licenseNumber(), 0.0, INITIAL_SALARY);
+        //To avoid cached version
+        Driver upgradedDriver = driverRepository.findByIdEverywhere(user.getId())
+                .orElseThrow(() -> new UserNotFound("Error during upgrade process."));
         return driverMapper.toResponse(upgradedDriver);
     }
 
@@ -183,12 +201,12 @@ public class DriverService {
     }
 
     @Transactional
-    public DriverResponse raiseSalary(Long id ,BigDecimal raiseAmount) {
-       Driver driver = driverRepository.findById(id)
-               .orElseThrow(() -> new UserNotFound("There is no Driver with id " +id));
+    public DriverResponse raiseSalary(Long id, BigDecimal raiseAmount) {
+        Driver driver = driverRepository.findById(id)
+                .orElseThrow(() -> new UserNotFound("There is no Driver with id " + id));
 
-       BigDecimal newSalary = driver.getSalary().add(raiseAmount);
-       driver.setSalary(newSalary);
+        BigDecimal newSalary = driver.getSalary().add(raiseAmount);
+        driver.setSalary(newSalary);
         return driverMapper.toResponse(driverRepository.save(driver));
     }
 
